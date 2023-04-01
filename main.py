@@ -6,6 +6,10 @@ import discobot_modules.egg as egg
 from discobot_modules.pretty_disco import pretty_listen
 import discobot_modules.text_coloring as tc
 
+import embeds
+import users
+import db
+
 print("Modules Imported.")
 
 intents = discord.Intents.default()
@@ -50,9 +54,12 @@ async def on_message(message):
     if msgl.split()[0] == "!hello":
         await message.channel.send("hi :)")
         
+    if msgl.split()[0] == "!help":
+        await message.reply(embed = embeds.help())
+    
     #ping the bot
     if msgl.split()[0] == client.user.mention:
-        await message.reply(message.author.mention)
+        await users.profile(message)
 
     if msgl.split()[0] == "!roll":
         await dice.roll(message)
@@ -65,8 +72,12 @@ async def on_message(message):
     
     if message.author.id in admin_uids:
         print("__--~~ADMIN SPEAKING~~--__")
+        if msgl.split()[0] == "!save":
+            db.save_db()
+            await message.channel.send("Saved database.")
         if msgl.split()[0] in ["]", "die", "kill"]:
-            await message.channel.send("Killing bot process...")
+            await message.channel.send("Saving database and killing bot process...")
+            db.save_db()
             quit()
         
     pretty_listen(message)
