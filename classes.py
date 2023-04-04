@@ -22,6 +22,7 @@ https://www.kaggle.com/datasets/mariotormo/complete-pokemon-dataset-updated-0904
 thanks mario
 """
 
+
 type_names = [
     "normal",
     "grass",
@@ -118,9 +119,9 @@ class Species():
                 
                 if str(pokedex_number) == d[1]:
                     return Species(
-                    pokedex_number  = d[1],
+                    pokedex_number  = int(float(d[1])),
                     name            = d[2],
-                    generation      = d[5],
+                    generation      = int(float(d[5])),
                     status          = d[6],
                     pokedex_species = d[7],
                     
@@ -134,14 +135,14 @@ class Species():
                     ability_2       = d[15],
                     ability_hidden  = d[16],
                     
-                    hp              = int(d[18]),
-                    attack          = int(d[19]),
-                    defense         = int(d[20]),
-                    sp_attack       = int(d[21]),
-                    sp_defense      = int(d[22]),
-                    speed           = int(d[23]),
+                    hp              = int(float(d[18])),
+                    attack          = int(float(d[19])),
+                    defense         = int(float(d[20])),
+                    sp_attack       = int(float(d[21])),
+                    sp_defense      = int(float(d[22])),
+                    speed           = int(float(d[23])),
                     
-                    catch_rate      = d[24],
+                    catch_rate      = int(float(d[24])) if d[24] else 1,
                     base_friendship = d[25],
                     base_experience = d[26],
                     growth_rate     = d[27]
@@ -233,6 +234,53 @@ class Individual():
         data["evs"] = ""# self.evs
         return data
 
+
+TOTAL_CATCH_RATE = 79195
+
+def random_encounter():
+    # selects a random pokemon. 
+    # easier catch rate pokemon are more common.
+    progress = random.randint(0,TOTAL_CATCH_RATE)
+    with open("data/pokedex.csv", "r+", encoding="utf-8") as f:
+        for dexentry in f.read().splitlines():
+            d = dexentry.split(",")
+            #skip the first csv
+            if d[1] == "pokedex_number":
+                continue
+            cr = int(float(d[24])) if d[24] else 1
+            progress -= cr
+            if progress <= 0:
+                return Species(
+                pokedex_number  = int(float(d[1])),
+                name            = d[2],
+                generation      = int(float(d[5])),
+                status          = d[6],
+                pokedex_species = d[7],
+                
+                type_1          = Elemental_Type[d[9].lower()],
+                type_2          = Elemental_Type[d[10].lower()] if d[10] else None,
+                
+                height_m        = d[11],
+                weight_kg       = d[12],
+                
+                ability_1       = d[14],
+                ability_2       = d[15],
+                ability_hidden  = d[16],
+                
+                hp              = int(float(d[18])),
+                attack          = int(float(d[19])),
+                defense         = int(float(d[20])),
+                sp_attack       = int(float(d[21])),
+                sp_defense      = int(float(d[22])),
+                speed           = int(float(d[23])),
+                
+                catch_rate      = int(float(d[24])) if d[24] else 1,
+                base_friendship = d[25],
+                base_experience = d[26],
+                growth_rate     = d[27]
+                )
+            
+
 if __name__ == "__main__":
     print(Species.load_index(25)  )
     print()
@@ -245,3 +293,22 @@ if __name__ == "__main__":
     print(Species.load_index(493) )
     print()
     print(Species.load_index(649) )
+
+    print(random_encounter())
+    print(random_encounter())
+    print(random_encounter())
+    print(random_encounter())
+    print(random_encounter())
+
+def calc_all_cr():
+    print("Calcing catch rates...")
+    total_cr = 0
+    for i in range(890):
+        try:
+            mon = Species.load_index(i+1)
+            total_cr += mon.catch_rate
+        except Exception:
+            print(f"Failed on thing {i+1}")
+            raise exception
+    print("Calc done!")
+    print(total_cr)

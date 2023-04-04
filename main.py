@@ -86,7 +86,7 @@ async def on_message(message):
         
         await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
         
-    if msgl.split()[0] == "!pokedex":
+    if msgl.split()[0] == "!summary":
         pkmn = classes.Individual.from_dict(db.USERS[message.author.id]["pokemon"][0])
         await message.reply(embed = embeds.pokemon_summary(pkmn))
     
