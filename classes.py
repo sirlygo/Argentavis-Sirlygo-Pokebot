@@ -123,6 +123,56 @@ class Species():
                     )
 
 
+@dataclass
+class Held_item():
+    name : str
+
+@dataclass
+class Individual():
+    """
+    This represents an individual pokemon in your pokemon collection.
+    """
+    nickname : str
+    species : Species
+    level : int = 1
+    shiny : bool = False
+    #evs : Evs
+    #ivs : Ivs
+    #held_item : Optional[Held_Item] = None
+    
+    @classmethod
+    def from_dict(cls, data):
+        req_keys = [
+        "nickname",
+        "species",
+        "level",
+        "shiny",
+        "item",
+        "ivs",
+        "evs"
+        ]
+        if not all(key in data for key in req_keys):
+            # If something is missing, we can't make a pokemon.
+            return None
+        
+        self.nickname = data["nickname"]
+        self.species = Species(data["species"])
+        self.level = data["level"]
+        self.shiny = data["shiny"]
+        #self.item = Item(data["item"]) if data["item"] else None
+        #self.ivs = data["ivs"]
+        #self.evs = data["evs"]
+    
+    def to_dict(self):
+        data = dict()
+        data["nickname"] = self.nickname
+        data["species"] = self.species.pokedex_number
+        data["level"] = self.level
+        data["shiny"] = self.shiny
+        data["item"] = ""#self.item.name if self.item else ""
+        data["ivs"] = ""# self.ivs
+        data["evs"] = ""# self.evs
+        return data
 
 if __name__ == "__main__":
     print(Species.from_file(25)  )

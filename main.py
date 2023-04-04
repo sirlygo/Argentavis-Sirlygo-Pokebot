@@ -1,4 +1,6 @@
 import discord
+import random
+
 import discobot_modules.action_timers as at
 import discobot_modules.emoji_actions as ea
 import discobot_modules.dice as dice
@@ -9,6 +11,9 @@ import discobot_modules.text_coloring as tc
 import embeds
 import users
 import db
+
+
+import classes
 
 print("Modules Imported.")
 
@@ -66,6 +71,22 @@ async def on_message(message):
 
     if msgl.split()[0] == "!egg":
         await egg.egg_timer(message)
+        
+    
+    
+    if msgl.split()[0] == "!makpkmn":
+        
+        spec = classes.Species.from_file(int(msgl.split()[2]))
+        
+        newmon = classes.Individual(msgl.split()[1], spec)
+        
+        db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
+    
+    # Award bp to chatters.
+    if message.author.id in db.USERS:
+        frequency = 1.0
+        if random.random() <= frequency:
+            db.USERS[message.author.id]["bp"] += 1
     
     
     admin_uids = [145031705303056384]

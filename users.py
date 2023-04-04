@@ -1,7 +1,7 @@
 from db import USERS
 import embeds
 
-def check_user(user):
+def debug_check_user(user):
     if user.id in USERS:
         return user.id
     return "idk"
@@ -26,7 +26,7 @@ def new_user(user):
     
     u["items"] = [0] * 7
     
-    u["pokemon"] = {}
+    u["pokemon"] = []
     
     
     u["battles"] = []
