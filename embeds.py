@@ -1,6 +1,7 @@
 import discord
 from discobot_modules.graphics import moon_bar
 from db import USERS
+import classes
 
 
 ############################
@@ -9,7 +10,7 @@ from db import USERS
 
 def help():
     desc = "To get started, ping the bot!"
-    em = discord.Embed(title="POKEBOT WIP", description=desc, color=0xA0A1B0, url="")
+    em = discord.Embed(title="POKEBOT WIP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
     #em.add_field(name="Spoon Battles", value="type !fight and then ping someone to challenge someone to a battle!")
     #em.add_field(name="Get Spoons", value="Contact TheStorageMan#1382 for more info. If you have Spoon Tokens, type !buy")
@@ -21,7 +22,7 @@ def help():
 
 def admin_help():
     desc = "Here are some of the admin's commands."
-    em = discord.Embed(title="ADMIN DASHBOARD WIP", description=desc, color=0xA0A1B0, url="")
+    em = discord.Embed(title="ADMIN DASHBOARD WIP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://cdn.discordapp.com/attachments/402334732974686208/1079251418340409465/3t0f5yfuwaka1.jpg")
     em.add_field(name="!save", value="Save the database.")
     em.add_field(name="\"]\", \"die\", \"kill\"", value="Save and shutdown.")
@@ -59,11 +60,94 @@ def profile(user):
     wlr = user_winlossratio(udic)
     #chars = udic["chars"]
     desc = f":coin:{bp}\n:trophy:{wins}\n:lifter:{wlr}"
-    em = discord.Embed(title=user.name, description=desc, color=0xA0A1B0, url="")
+    em = discord.Embed(title=user.name, description=desc, color=0xA0A1B0)
     em.set_thumbnail(url=user.display_avatar.url)
     #em.add_field(name="Characters", value=str(chars))
     return em
 
+
+############################
+# Pokemon Embeds
+############################
+
+def pokemon_stats(pokemon):
+    # define helpful lists
+    colors = [
+        "⬛",
+        "🟥",
+        "🟧",
+        "🟨",
+        "🟩",
+        "🟦",
+    ]
+    stats = [
+        pokemon.hp,
+        pokemon.attack,
+        pokemon.defense,
+        pokemon.sp_attack,
+        pokemon.sp_defense,
+        pokemon.speed
+    ]
+    names = [
+        "HP",
+        "ATK",
+        "DEF",
+        "SPATK",
+        "SPDEF",
+        "SPEED"
+    ]
+    # Round stats by dividing by 50
+    stats = [int(round(x/50)) for x in stats]
+    # Add a line to the string for each stat.
+    text = ""
+    for stat, name in zip(stats, names):
+        text += name + " "
+        # add a certain amount of blocks.
+        # Add 1 if the value is rounded to 0.
+        blocks = max(stat,1)
+        for i in range(blocks):
+            text += colors[stat]
+        text += "\n"
+    return text
+    
+
+def pokedex(pokemon_id):
+    # bounds checks
+    pokemon_id = pokemon_id % 890
+    if pokemon_id < 1:
+        pokemon_id = 890
+    
+    pkmn = classes.Species.from_file(pokemon_id)
+    title= f"{pkmn.name} #{pokemon_id}"
+    poketypes = str(pkmn.get_elemental_typing())
+    status = "" if pkmn.status == "Normal" else pkmn.status
+    status = f"Generation 1 {status}"
+    pokestats = pokemon_stats(pkmn)
+    desc = f"*{pkmn.pokedex_species}*\n{status}\n{poketypes}\n{pokestats}"
+    em = discord.Embed(title=title, description=desc, color=0xE12005)
+    em.add_field(name="Abilities", value="\n".join(pkmn.get_abilities()))
+    return em
+    
+def pokemon_summary(pokemon):
+    ...
+
+
+############################
+# interaction Embeds
+############################
+
+def inventory(user, page):
+    ...
+
+############################
+# Pokemon Event Embeds
+############################
+
+def wild_encounter(encounter):
+    ...
+    
+def battle(battle):
+    ...
 
 ############################
 # Leaderboard Embeds

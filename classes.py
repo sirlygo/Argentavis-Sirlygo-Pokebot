@@ -76,8 +76,23 @@ class Species():
     base_experience : int # ?
     growth_rate : str
     
+    
     def get_bst(self):
         return self.hp + self.attack + self.defense + self.sp_attack + self.sp_defense + self.speed
+    
+    def get_elemental_typing(self):
+        elemental_typing = [self.type_1]
+        if self.type_2:
+            elemental_typing.append(self.type_2)
+        return elemental_typing
+        
+    def get_abilities(self):
+        abilities = [self.ability_1]
+        if self.ability_2:
+            abilities.append(self.ability_2)
+        if self.ability_hidden:
+            abilities.append(self.ability_hidden)
+        return abilities
     
     @classmethod
     def from_file(cls, pokedex_number, file_path = "data/pokedex.csv"):
@@ -139,6 +154,18 @@ class Individual():
     #evs : Evs
     #ivs : Ivs
     #held_item : Optional[Held_Item] = None
+    
+    
+    def get_stats(self):
+    
+        return {
+        "hp" : self.species.hp * self.level / 100,
+        "attack" : self.species.attack * self.level / 100,
+        "defense" : self.species.defense * self.level / 100,
+        "sp_attack" : self.species.sp_attack * self.level / 100,
+        "sp_defense" : self.species.sp_defense * self.level / 100,
+        "speed" : self.species.speed * self.level / 100
+        }
     
     @classmethod
     def from_dict(cls, data):

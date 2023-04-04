@@ -81,6 +81,10 @@ async def on_message(message):
         newmon = classes.Individual(msgl.split()[1], spec)
         
         db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
+        
+    if msgl.split()[0] == "!pokedex":
+        
+        await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
     
     # Award bp to chatters.
     if message.author.id in db.USERS:
