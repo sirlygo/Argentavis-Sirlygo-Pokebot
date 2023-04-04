@@ -70,7 +70,7 @@ def profile(user):
 # Pokemon Embeds
 ############################
 
-def pokemon_stats(pokemon):
+def stat_blocks(pokemon):
     # define helpful lists
     colors = [
         "⬛",
@@ -80,14 +80,7 @@ def pokemon_stats(pokemon):
         "🟩",
         "🟦",
     ]
-    stats = [
-        pokemon.hp,
-        pokemon.attack,
-        pokemon.defense,
-        pokemon.sp_attack,
-        pokemon.sp_defense,
-        pokemon.speed
-    ]
+    stats = pokemon.get_stats_list()
     names = [
         "HP",
         "ATK",
@@ -123,13 +116,20 @@ def pokedex(pokemon_id):
     status = "" if pkmn.status == "Normal" else pkmn.status
     status = f"Generation 1 {status}"
     pokestats = pokemon_stats(pkmn)
-    desc = f"*{pkmn.pokedex_species}*\n{status}\n{poketypes}\n{pokestats}"
+    desc = f"*{pkmn.pokedex_species}\n{status}*\n{poketypes}\n{pokestats}"
     em = discord.Embed(title=title, description=desc, color=0xE12005)
     em.add_field(name="Abilities", value="\n".join(pkmn.get_abilities()))
     return em
     
-def pokemon_summary(pokemon):
-    ...
+def pokemon_summary(pokemon_instance):
+    title = pokemon_instance.get_title()
+    desc = f"Level {pokemon_instance.level}"
+    if pokemon_instance.shiny:
+        desc += "✨"
+    poketypes = str(pokemon_instance.species.get_elemental_typing())
+    pokestats = pokemon_stats(pokemon_instance)
+    desc += f"\n{poketypes}\n{pokestats}"
+    
 
 
 ############################

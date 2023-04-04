@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional
 from dataclasses import dataclass, field
+import random
 
 """
 ,pokedex_number,name,,,generation,status,species,
@@ -80,6 +81,15 @@ class Species():
     def get_bst(self):
         return self.hp + self.attack + self.defense + self.sp_attack + self.sp_defense + self.speed
     
+    def get_stats_list(self):
+        return [
+            self.hp,
+            self.attack,
+            self.defense,
+            self.sp_attack,
+            self.sp_defense,
+            self.speed
+        ]
     def get_elemental_typing(self):
         elemental_typing = [self.type_1]
         if self.type_2:
@@ -142,22 +152,32 @@ class Species():
 class Held_item():
     name : str
 
-@dataclass
+
 class Individual():
     """
     This represents an individual pokemon in your pokemon collection.
     """
-    nickname : str
-    species : Species
-    level : int = 1
-    shiny : bool = False
-    #evs : Evs
-    #ivs : Ivs
-    #held_item : Optional[Held_Item] = None
+    def __init__(self, species, nickname = None, level= 1, shiny=None):
+        self.species = species
+        self.nickname = nickname
+        self.level = level
+        self.shiny = shiny if shiny is not None else random.randint(1,8192) == 8192
+        #self.evs : Evs
+        #self.ivs : Ivs
+        #self.held_item : Optional[Held_Item] = None
     
+    def get_name(self):
+        if not self.nickname:
+            return self.species.name
+        return self.nickname
+    def get_title(self):
+        if not self.nickname:
+            return self.species.name
+        if self.nickname == self.species.name:
+            return self.species.name
+        return f"{self.nickname} ({self.species.name})"
     
     def get_stats(self):
-    
         return {
         "hp" : self.species.hp * self.level / 100,
         "attack" : self.species.attack * self.level / 100,
@@ -166,6 +186,17 @@ class Individual():
         "sp_defense" : self.species.sp_defense * self.level / 100,
         "speed" : self.species.speed * self.level / 100
         }
+    
+    def get_stats_list(self):
+        stats = self.get_stats()
+        return [
+            stats["hp"],
+            stats["attack"],
+            stats["defense"],
+            stats["sp_attack"],
+            stats["sp_defense"],
+            stats["speed"]
+        ]
     
     @classmethod
     def from_dict(cls, data):
