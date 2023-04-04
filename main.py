@@ -76,7 +76,7 @@ async def on_message(message):
     
     if msgl.split()[0] == "!makpkmn":
         
-        spec = classes.Species.from_file(int(msgl.split()[2]))
+        spec = classes.Species.load_index(int(msgl.split()[2]))
         
         newmon = classes.Individual(msgl.split()[1], spec)
         
@@ -85,6 +85,10 @@ async def on_message(message):
     if msgl.split()[0] == "!pokedex":
         
         await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
+        
+    if msgl.split()[0] == "!pokedex":
+        pkmn = classes.Individual.from_dict(db.USERS[message.author.id]["pokemon"][0])
+        await message.reply(embed = embeds.pokemon_summary(pkmn))
     
     # Award bp to chatters.
     if message.author.id in db.USERS:

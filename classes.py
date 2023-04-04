@@ -105,7 +105,7 @@ class Species():
         return abilities
     
     @classmethod
-    def from_file(cls, pokedex_number, file_path = "data/pokedex.csv"):
+    def load_index(cls, pokedex_number, file_path = "data/pokedex.csv"):
         """
         Load a pokemon species from a csv file.
         
@@ -213,13 +213,14 @@ class Individual():
             # If something is missing, we can't make a pokemon.
             return None
         
-        self.nickname = data["nickname"]
-        self.species = Species(data["species"])
-        self.level = data["level"]
-        self.shiny = data["shiny"]
+        nickname = data["nickname"]
+        species = Species.load_index(data["species"])
+        level = data["level"]
+        shiny = data["shiny"]
         #self.item = Item(data["item"]) if data["item"] else None
         #self.ivs = data["ivs"]
         #self.evs = data["evs"]
+        return cls(species, nickname, level, shiny)
     
     def to_dict(self):
         data = dict()
@@ -233,14 +234,14 @@ class Individual():
         return data
 
 if __name__ == "__main__":
-    print(Species.from_file(25)  )
+    print(Species.load_index(25)  )
     print()
-    print(Species.from_file(151) )
+    print(Species.load_index(151) )
     print()
-    print(Species.from_file(251) )
+    print(Species.load_index(251) )
     print()
-    print(Species.from_file(386) )
+    print(Species.load_index(386) )
     print()
-    print(Species.from_file(493) )
+    print(Species.load_index(493) )
     print()
-    print(Species.from_file(649) )
+    print(Species.load_index(649) )

@@ -110,12 +110,12 @@ def pokedex(pokemon_id):
     if pokemon_id < 1:
         pokemon_id = 890
     
-    pkmn = classes.Species.from_file(pokemon_id)
+    pkmn = classes.Species.load_index(pokemon_id)
     title= f"{pkmn.name} #{pokemon_id}"
     poketypes = str(pkmn.get_elemental_typing())
     status = "" if pkmn.status == "Normal" else pkmn.status
     status = f"Generation 1 {status}"
-    pokestats = pokemon_stats(pkmn)
+    pokestats = stat_blocks(pkmn)
     desc = f"*{pkmn.pokedex_species}\n{status}*\n{poketypes}\n{pokestats}"
     em = discord.Embed(title=title, description=desc, color=0xE12005)
     em.add_field(name="Abilities", value="\n".join(pkmn.get_abilities()))
@@ -127,8 +127,10 @@ def pokemon_summary(pokemon_instance):
     if pokemon_instance.shiny:
         desc += "✨"
     poketypes = str(pokemon_instance.species.get_elemental_typing())
-    pokestats = pokemon_stats(pokemon_instance)
+    pokestats = stat_blocks(pokemon_instance)
     desc += f"\n{poketypes}\n{pokestats}"
+    em = discord.Embed(title=title, description=desc, color=0xE12005)
+    return em
     
 
 
