@@ -11,6 +11,7 @@ import discobot_modules.text_coloring as tc
 import embeds
 import users
 import db
+import encounters
 
 
 import classes
@@ -74,19 +75,12 @@ async def on_message(message):
         
     
     
-    if msgl.split()[0] == "!makpkmn":
-        
-        spec = classes.Species.load_index(int(msgl.split()[2]))
-        
-        newmon = classes.Individual(msgl.split()[1], spec)
-        
-        db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
         
     if msgl.split()[0] == "!pokedex":
         
         await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
         
-    if msgl.split()[0] == "!summary":
+    if msgl == "!summary partner":
         pkmn = classes.Individual.from_dict(db.USERS[message.author.id]["pokemon"][0])
         await message.reply(embed = embeds.pokemon_summary(pkmn))
     
@@ -96,8 +90,9 @@ async def on_message(message):
         if random.random() <= frequency:
             db.USERS[message.author.id]["bp"] += 1
     
+    await encounters.roll_possible_encounter(message, 0.01)
     
-    admin_uids = [145031705303056384]
+    admin_uids = [145031705303056384, 291107598030340106]
     
     if message.author.id in admin_uids:
         print("__--~~ADMIN SPEAKING~~--__")
@@ -108,6 +103,16 @@ async def on_message(message):
             await message.channel.send("Saving database and killing bot process...")
             db.save_db()
             quit()
+        if msgl.split()[0] == "!makpkmn":
+            
+            spec = classes.Species.load_index(int(msgl.split()[2]))
+            
+            newmon = classes.Individual(msgl.split()[1], spec)
+            
+            db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
+        if msgl.split()[0] == "!spawn":
+            await encounters.roll_possible_encounter(message, 1)
+        
         
     pretty_listen(message)
     await at.listen_timers(message)

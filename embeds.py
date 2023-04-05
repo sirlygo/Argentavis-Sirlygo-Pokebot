@@ -3,6 +3,11 @@ from discobot_modules.graphics import moon_bar
 from db import USERS
 import classes
 
+"""
+This module defines all the embeds that the bot can display.
+
+An embed is a panel with information arranged hierarchically.
+"""
 
 ############################
 # Help Embeds
@@ -62,7 +67,15 @@ def profile(user):
     desc = f":coin:{bp}\n:trophy:{wins}\n:lifter:{wlr}"
     em = discord.Embed(title=user.name, description=desc, color=0xA0A1B0)
     em.set_thumbnail(url=user.display_avatar.url)
-    #em.add_field(name="Characters", value=str(chars))
+    pkmn = ""
+    for i, mon in enumerate(USERS[user.id]["pokemon"]):
+        mymon = classes.Individual.from_dict(mon)
+        pkmn += mymon.get_name()
+        pkmn += "\n"
+        if i > 5:
+            break
+    pkmn = pkmn if pkmn else "None."
+    em.add_field(name="Pokemon:", value=pkmn)
     return em
 
 
@@ -119,6 +132,7 @@ def pokedex(pokemon_id):
     desc = f"*{pkmn.pokedex_species}\n{status}*\n{poketypes}\n{pokestats}"
     em = discord.Embed(title=title, description=desc, color=0xE12005)
     em.add_field(name="Abilities", value="\n".join(pkmn.get_abilities()))
+    em.set_image(url=pkmn.naive_image())
     return em
     
 def pokemon_summary(pokemon_instance):
@@ -130,6 +144,7 @@ def pokemon_summary(pokemon_instance):
     pokestats = stat_blocks(pokemon_instance)
     desc += f"\n{poketypes}\n{pokestats}"
     em = discord.Embed(title=title, description=desc, color=0xE12005)
+    em.set_image(url=pkmn.species.naive_image())
     return em
     
 
@@ -145,8 +160,16 @@ def inventory(user, page):
 # Pokemon Event Embeds
 ############################
 
-def wild_encounter(encounter):
-    ...
+def wild_encounter(pkmn):
+    status = "" if pkmn.species.status == "Normal" else pkmn.species.status
+    if pkmn.shiny:
+        status = "SHINY"
+    title= f"WILD {status} ENCOUNTER"
+    pokestats = stat_blocks(pkmn)
+    desc = f"**A wild {pkmn.species.name} appeared!**"
+    em = discord.Embed(title=title, description=desc, color=0xE12005)
+    em.set_image(url=pkmn.species.naive_image())
+    return em
     
 def battle(battle):
     ...

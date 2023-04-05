@@ -74,8 +74,8 @@ class Species():
     speed : int
     
     catch_rate : int
-    base_friendship : int
-    base_experience : int # ?
+    base_friendship : int # i'm not sure what this value does?
+    base_experience : int # i'm not sure what this value does?
     growth_rate : str
     
     
@@ -83,6 +83,7 @@ class Species():
         return self.hp + self.attack + self.defense + self.sp_attack + self.sp_defense + self.speed
     
     def get_stats_list(self):
+        """Format stats as a list with 6 elements."""
         return [
             self.hp,
             self.attack,
@@ -92,18 +93,65 @@ class Species():
             self.speed
         ]
     def get_elemental_typing(self):
+        """Put typing into a list with one or two elements."""
         elemental_typing = [self.type_1]
         if self.type_2:
             elemental_typing.append(self.type_2)
         return elemental_typing
         
     def get_abilities(self):
+        """Put abilities in a list."""
         abilities = [self.ability_1]
         if self.ability_2:
             abilities.append(self.ability_2)
         if self.ability_hidden:
             abilities.append(self.ability_hidden)
         return abilities
+    
+    def naive_image(self, shiny = False):
+        """Access pokemondb for shiny/normal sprites."""
+        shiny = "shiny" if shiny else "normal"
+        return f"https://img.pokemondb.net/sprites/home/{shiny}/2x/{self.name.lower()}.jpg"
+
+    
+    def naive_ion(self, shiny = False):
+        """Access pokemondb for icons."""
+        return f"https://img.pokemondb.net/sprites/sword-shield/icon/{self.name.lower()}.png"
+    
+    @classmethod
+    def from_data(cls, d):
+        """Take a list of string values and convert them to the right structure."""
+        
+        # Use int(float()) pattern to convert "18.0" into 18.
+        return cls(
+        pokedex_number  = int(float(d[1])),
+        name            = d[2],
+        generation      = int(float(d[5])),
+        status          = d[6],
+        pokedex_species = d[7],
+        
+        type_1          = Elemental_Type[d[9].lower()],
+        type_2          = Elemental_Type[d[10].lower()] if d[10] else None,
+        
+        height_m        = d[11],
+        weight_kg       = d[12],
+        
+        ability_1       = d[14],
+        ability_2       = d[15],
+        ability_hidden  = d[16],
+        
+        hp              = int(float(d[18])),
+        attack          = int(float(d[19])),
+        defense         = int(float(d[20])),
+        sp_attack       = int(float(d[21])),
+        sp_defense      = int(float(d[22])),
+        speed           = int(float(d[23])),
+        
+        catch_rate      = int(float(d[24])) if d[24] else 1,
+        base_friendship = d[25],
+        base_experience = d[26],
+        growth_rate     = d[27]
+        )
     
     @classmethod
     def load_index(cls, pokedex_number, file_path = "data/pokedex.csv"):
@@ -118,35 +166,8 @@ class Species():
                 d = dexentry.split(",")
                 
                 if str(pokedex_number) == d[1]:
-                    return Species(
-                    pokedex_number  = int(float(d[1])),
-                    name            = d[2],
-                    generation      = int(float(d[5])),
-                    status          = d[6],
-                    pokedex_species = d[7],
-                    
-                    type_1          = Elemental_Type[d[9].lower()],
-                    type_2          = Elemental_Type[d[10].lower()] if d[10] else None,
-                    
-                    height_m        = d[11],
-                    weight_kg       = d[12],
-                    
-                    ability_1       = d[14],
-                    ability_2       = d[15],
-                    ability_hidden  = d[16],
-                    
-                    hp              = int(float(d[18])),
-                    attack          = int(float(d[19])),
-                    defense         = int(float(d[20])),
-                    sp_attack       = int(float(d[21])),
-                    sp_defense      = int(float(d[22])),
-                    speed           = int(float(d[23])),
-                    
-                    catch_rate      = int(float(d[24])) if d[24] else 1,
-                    base_friendship = d[25],
-                    base_experience = d[26],
-                    growth_rate     = d[27]
-                    )
+                    # Use int(float()) pattern to convert "18.0" into 18.
+                    return Species.from_data(d)
 
 
 @dataclass
@@ -234,7 +255,7 @@ class Individual():
         data["evs"] = ""# self.evs
         return data
 
-
+# 
 TOTAL_CATCH_RATE = 79195
 
 def random_encounter():
@@ -250,35 +271,8 @@ def random_encounter():
             cr = int(float(d[24])) if d[24] else 1
             progress -= cr
             if progress <= 0:
-                return Species(
-                pokedex_number  = int(float(d[1])),
-                name            = d[2],
-                generation      = int(float(d[5])),
-                status          = d[6],
-                pokedex_species = d[7],
-                
-                type_1          = Elemental_Type[d[9].lower()],
-                type_2          = Elemental_Type[d[10].lower()] if d[10] else None,
-                
-                height_m        = d[11],
-                weight_kg       = d[12],
-                
-                ability_1       = d[14],
-                ability_2       = d[15],
-                ability_hidden  = d[16],
-                
-                hp              = int(float(d[18])),
-                attack          = int(float(d[19])),
-                defense         = int(float(d[20])),
-                sp_attack       = int(float(d[21])),
-                sp_defense      = int(float(d[22])),
-                speed           = int(float(d[23])),
-                
-                catch_rate      = int(float(d[24])) if d[24] else 1,
-                base_friendship = d[25],
-                base_experience = d[26],
-                growth_rate     = d[27]
-                )
+                spec = Species.from_data(d)
+                return Individual(spec)
             
 
 if __name__ == "__main__":
@@ -299,6 +293,7 @@ if __name__ == "__main__":
     print(random_encounter())
     print(random_encounter())
     print(random_encounter())
+    
 
 def calc_all_cr():
     print("Calcing catch rates...")
