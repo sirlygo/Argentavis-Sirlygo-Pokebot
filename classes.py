@@ -3,20 +3,18 @@ from typing import Optional
 from dataclasses import dataclass, field
 import random
 
-"""
-,pokedex_number,name,,,generation,status,species,
-,type_1,type_2,height_m,weight_kg,
-,ability_1,ability_2,ability_hidden,
-,hp,attack,defense,sp_attack,sp_defense,speed,
-catch_rate,base_friendship,base_experience,growth_rate,
-,,,,,
-,,,,,,
-,,,,,,
-,,,,,
+
 
 """
+This module defines classes for specieses and individuals.
 
-"""
+These classes have data on how these objects behave, as well as how to load them from file or save them.
+
+In this project, each species is a species (or form?) of pokemon,
+and each individual is an individual pokemon in the wild or in your collection.
+
+The csv dataset i used is below.
+
 https://www.kaggle.com/datasets/mariotormo/complete-pokemon-dataset-updated-090420?resource=download&select=pokedex_%28Update_05.20%29.csv
 
 thanks mario
@@ -120,7 +118,21 @@ class Species():
     
     @classmethod
     def from_data(cls, d):
-        """Take a list of string values and convert them to the right structure."""
+        """
+        Take a list of string values and convert them to the right structure.
+        
+        The CSV file used for this project has relevent data in this structure:
+        
+        ,pokedex_number,name,,,generation,status,species,
+        ,type_1,type_2,height_m,weight_kg,
+        ,ability_1,ability_2,ability_hidden,
+        ,hp,attack,defense,sp_attack,sp_defense,speed,
+        catch_rate,base_friendship,base_experience,growth_rate,
+        ,,,,,
+        ,,,,,,
+        ,,,,,,
+        ,,,,,
+        """
         
         # Use int(float()) pattern to convert "18.0" into 18.
         return cls(
@@ -156,7 +168,7 @@ class Species():
     @classmethod
     def load_index(cls, pokedex_number, file_path = "data/pokedex.csv"):
         """
-        Load a pokemon species from a csv file.
+        Load a species from a csv file.
         
         This is done by simply looping through the list until we find the right natdexno.
         """
@@ -177,7 +189,7 @@ class Held_item():
 
 class Individual():
     """
-    This represents an individual pokemon in your pokemon collection.
+    This represents an individual in your collection.
     """
     def __init__(self, species, nickname = None, level= 1, shiny=None):
         self.species = species
@@ -189,10 +201,17 @@ class Individual():
         #self.held_item : Optional[Held_Item] = None
     
     def get_name(self):
+        """
+        An individual's name might be a nickname or it's species name.
+        """
         if not self.nickname:
             return self.species.name
         return self.nickname
     def get_title(self):
+        """
+        An individual's name might be a nickname or it's species name.
+        Disambiguate what part is the name and what is the species.
+        """
         if not self.nickname:
             return self.species.name
         if self.nickname == self.species.name:
@@ -200,6 +219,9 @@ class Individual():
         return f"{self.nickname} ({self.species.name})"
     
     def get_stats(self):
+        """
+        WIP calculation of an individuals's stats as it levels up.
+        """
         return {
         "hp" : self.species.hp * self.level / 100,
         "attack" : self.species.attack * self.level / 100,
@@ -210,6 +232,7 @@ class Individual():
         }
     
     def get_stats_list(self):
+        """Format stats as a list with six elements instead of a dict."""
         stats = self.get_stats()
         return [
             stats["hp"],
@@ -222,6 +245,7 @@ class Individual():
     
     @classmethod
     def from_dict(cls, data):
+        """Load an individual from a dict, like how it might be stored in file."""
         req_keys = [
         "nickname",
         "species",
@@ -255,12 +279,14 @@ class Individual():
         data["evs"] = ""# self.evs
         return data
 
-# 
+# Precalculated value, sum of all catch weights of all pokemon.
 TOTAL_CATCH_RATE = 79195
 
 def random_encounter():
-    # selects a random pokemon. 
-    # easier catch rate pokemon are more common.
+    """"
+    Select a random pokemon. 
+    Pokemon with an easier catch rate are more common.
+    """
     progress = random.randint(0,TOTAL_CATCH_RATE)
     with open("data/pokedex.csv", "r+", encoding="utf-8") as f:
         for dexentry in f.read().splitlines():
@@ -296,6 +322,7 @@ if __name__ == "__main__":
     
 
 def calc_all_cr():
+    """Pre-calculate the total catch rate in the pokemon csv."""
     print("Calcing catch rates...")
     total_cr = 0
     for i in range(890):
