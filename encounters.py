@@ -17,7 +17,7 @@ This class handles the behavior of the wild encounter system.
 """
 
 
-async def roll_possible_encounter(message, probabil):
+async def roll_possible_encounter(message, probability):
     if random.random() <= probability:
         await new_encounter(message)
 
