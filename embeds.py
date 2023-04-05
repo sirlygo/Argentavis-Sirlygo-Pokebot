@@ -15,13 +15,13 @@ An embed is a panel with information arranged hierarchically.
 
 def help():
     desc = "To get started, ping the bot!"
-    em = discord.Embed(title="POKEBOT WIP", description=desc, color=0xA0A1B0)
+    em = discord.Embed(title="POKEBOT 0.1", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
     em.add_field(name="Earn Battle Points", value="Chatting in the server can earn you BP!")
     em.add_field(name="Find Wild Pokemon", value="Occasionally, wild pokemon will spawn. Will you be the one to catch it?")
+    em.add_field(name="!shop", value="Show the shop screen, so you can buy items.", inline=False)
     em.add_field(name="!pokedex", value="View the pokedex. Type !pokedex 151 to see a specific pokemon.")
-    #em.add_field(name="!sendchar", value="allows you to send spoons to other players.")
-    #em.add_field(name="!sendgold", value="allows you to send gold to other players.")
+    em.add_field(name="!summary", value="Take a look at your own pokemon. type a number to see a specific one of your mons.")
     #em.add_field(name="!leaderboard", value="Display the leaderboard of today's top players.")
     return em
 
@@ -102,17 +102,20 @@ def stat_blocks(pokemon):
         "SPDEF",
         "SPEED"
     ]
+    # Original stats
+    values = stats.copy()
     # Round stats by dividing by 50
     stats = [int(round(x/50)) for x in stats]
     # Add a line to the string for each stat.
     text = ""
-    for stat, name in zip(stats, names):
+    for stat, name, value in zip(stats, names, values):
         text += name + " "
         # add a certain amount of blocks.
         # Add 1 if the value is rounded to 0.
         blocks = max(stat,1)
         for i in range(blocks):
             text += colors[stat]
+        #text += str(value)
         text += "\n"
     return text
     
@@ -125,7 +128,8 @@ def pokedex(pokemon_id):
     
     pkmn = classes.Species.load_index(pokemon_id)
     title= f"{pkmn.name} #{pokemon_id}"
-    poketypes = str(pkmn.get_elemental_typing())
+    poketypes = pokemon_instance.species.get_elemental_typing()
+    poketypes = [x.name for x in poketypes]
     status = "" if pkmn.status == "Normal" else pkmn.status
     status = f"Generation 1 {status}"
     pokestats = stat_blocks(pkmn)
@@ -140,11 +144,12 @@ def pokemon_summary(pokemon_instance):
     desc = f"Level {pokemon_instance.level}"
     if pokemon_instance.shiny:
         desc += "✨"
-    poketypes = str(pokemon_instance.species.get_elemental_typing())
+    poketypes = pokemon_instance.species.get_elemental_typing()
+    poketypes = [x.name for x in poketypes]
     pokestats = stat_blocks(pokemon_instance)
     desc += f"\n{poketypes}\n{pokestats}"
     em = discord.Embed(title=title, description=desc, color=0xE12005)
-    em.set_image(url=pkmn.species.naive_image())
+    em.set_image(url=pokemon_instance.species.naive_image())
     return em
     
 
@@ -153,8 +158,15 @@ def pokemon_summary(pokemon_instance):
 # interaction Embeds
 ############################
 
-def inventory(user, page):
-    ...
+def inventory():
+    desc = "More items coming soon!"
+    em = discord.Embed(title="POKEBOT SHOP", description=desc, color=0xA0A1B0)
+    em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
+    em.add_field(name="<:poke:1092956340349046844> Pokeball BP10", value="Normal catch rate.\n!buy pokeball")
+    em.add_field(name="<:great:1092956339166248961> Greatball BP20", value="1.5x catch rate.\n!buy greatball")
+    em.add_field(name="<:ultra:1092956341670252624> Ultraball BP30", value="2x catch rate.\n!buy ultraball")
+    return em
+
 
 ############################
 # Pokemon Event Embeds

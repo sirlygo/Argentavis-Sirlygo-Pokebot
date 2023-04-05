@@ -75,13 +75,21 @@ async def on_message(message):
         
     
     
+    if msgl.split()[0] == "!shop":
+        await economy.send_shop_screen(message)
         
+    if msgl.split()[0] == "!buy":
+        if msgl.split()[1] in ["pokeball", "greatball", "ultraball"]:
+            await economy.buy(message.author.id, msgl.split()[1])
+            
     if msgl.split()[0] == "!pokedex":
-        
         await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
         
-    if msgl == "!summary partner":
-        pkmn = classes.Individual.from_dict(db.USERS[message.author.id]["pokemon"][0])
+    if msgl.split()[0] == "!summary":
+        index = 0
+        if msgl.split()[1].isdigit():
+            index = int(msgl.split()[1])
+        pkmn = classes.Individual.from_dict(db.USERS[message.author.id]["pokemon"][index])
         await message.reply(embed = embeds.pokemon_summary(pkmn))
     
     # Award bp to chatters.
