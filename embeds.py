@@ -17,9 +17,9 @@ def help():
     desc = "To get started, ping the bot!"
     em = discord.Embed(title="POKEBOT WIP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
-    #em.add_field(name="Spoon Battles", value="type !fight and then ping someone to challenge someone to a battle!")
-    #em.add_field(name="Get Spoons", value="Contact TheStorageMan#1382 for more info. If you have Spoon Tokens, type !buy")
-    #em.add_field(name="!show", value="View the spoons available. try the command for more info.")
+    em.add_field(name="Earn Battle Points", value="Chatting in the server can earn you BP!")
+    em.add_field(name="Find Wild Pokemon", value="Occasionally, wild pokemon will spawn. Will you be the one to catch it?")
+    em.add_field(name="!pokedex", value="View the pokedex. Type !pokedex 151 to see a specific pokemon.")
     #em.add_field(name="!sendchar", value="allows you to send spoons to other players.")
     #em.add_field(name="!sendgold", value="allows you to send gold to other players.")
     #em.add_field(name="!leaderboard", value="Display the leaderboard of today's top players.")
@@ -172,6 +172,7 @@ def wild_encounter(pkmn):
     return em
     
 def battle(battle):
+    # Not yet implemented.
     ...
 
 ############################
@@ -197,8 +198,16 @@ def leaderboard_bp():
     return leaderboard(
                     "RICHEST PLAYERS", 
                     "Some of the most active users today...",
-                    lambda x: x[1]['bp'],
+                    lambda x: x[1]["bp"],
                     ":coin:"
+                    )
+
+def leaderboard_most_mons():
+    return leaderboard(
+                    "POKEMON COLLECTORS", 
+                    "Some of the most active users today...",
+                    lambda x: len(x[1]["pokemon"]),
+                    "<:poke:1092956340349046844>"
                     )
                     
 def leaderboard_wins():

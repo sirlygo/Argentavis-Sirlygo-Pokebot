@@ -5,6 +5,7 @@ This module stores references to cache objects so other modules can access them.
 """
 
 USERS = Frequency_Cache(100, "data/users/", static=False)
+ITEMS = Frequency_Cache(100, "data/items/")
 
 
 

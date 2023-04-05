@@ -1,10 +1,9 @@
 from db import USERS
 import embeds
 
-def debug_check_user(user):
-    if user.id in USERS:
-        return user.id
-    return "idk"
+"""
+This module handles user profiles and the onboarding system.
+"""
 
 async def profile(message):
     """Show a profile, making a new user if needed."""
@@ -24,7 +23,7 @@ def new_user(user):
     
     u["bp"] = 0
     
-    u["items"] = [0] * 7
+    u["items"] = {"pokeball": 5}
     
     u["pokemon"] = []
     
