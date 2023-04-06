@@ -34,7 +34,8 @@ async def new_encounter(message):
             await encounter_message.channel.send(f"{reactor.mention}, you need to ping the bot to set up first!")
             return er(complete_action=False)
         await encounter_message.channel.send(f"Battle system not yet implemented ¯\_(ツ)_/¯")
-        return er(remove_dis_post=True, clear_reactions=True)
+        return er(complete_action=False)
+        #return er(remove_dis_post=True, clear_reactions=True)
     
     async def catch(args, ball = "pokeball"):
         reactor = args[1]

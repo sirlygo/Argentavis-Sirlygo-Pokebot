@@ -1,7 +1,7 @@
+import discobot_modules.text_coloring as tc
 from db import USERS
 from db import ITEMS
-import discobot_modules.text_coloring as tc
-#import embeds
+import embeds
 
 """
 This module handles inventory and shop system.
@@ -12,7 +12,8 @@ async def send_shop_screen(message):
     em = embeds.shop()
     await message.reply(embed = em)
 
-def buy(uid, item_key):
+async def buy(message, item_key):
+    uid = message.author.id
     if uid not in USERS:
         print(f"{tc.R}Cannot grant item {tc.W}\"{item_key}\"{tc.R} to user because there is no user with this uid:\n{tc.B}{uid}{tc.W}")
         return
@@ -21,13 +22,16 @@ def buy(uid, item_key):
         return
     item = ITEMS[item_key]
     user = USERS[uid]
+    item_name = item["name"]
     if user["bp"] < item["price"]:
-        print(f"{tc.O}lol user {tc.B}{uid}{tc.O} is too poor to afford{tc.W}\"{item_key}\"{tc.O} lol.{tc.W}")
+        await message.reply(f"You're too poor to afford a {item_name}. Come back when you're a little... *mmmm...* Richer.")
         return
     # Perform Transaction
     user_gain_item(uid, item_key)
     user["bp"] -=item["price"]
     USERS[uid] = user
+    await message.reply(f"Here's your {item_name}! We hope to see you again!")
+        
     
 
 def user_item_count(user, item_key):

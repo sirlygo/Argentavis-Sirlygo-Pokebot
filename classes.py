@@ -112,7 +112,7 @@ class Species():
         return f"https://img.pokemondb.net/sprites/home/{shiny}/2x/{self.name.lower()}.jpg"
 
     
-    def naive_ion(self, shiny = False):
+    def naive_icon(self, shiny = False):
         """Access pokemondb for icons."""
         return f"https://img.pokemondb.net/sprites/sword-shield/icon/{self.name.lower()}.png"
     

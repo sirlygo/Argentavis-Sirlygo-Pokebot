@@ -128,7 +128,7 @@ def pokedex(pokemon_id):
     
     pkmn = classes.Species.load_index(pokemon_id)
     title= f"{pkmn.name} #{pokemon_id}"
-    poketypes = pokemon_instance.species.get_elemental_typing()
+    poketypes = pkmn.get_elemental_typing()
     poketypes = [x.name for x in poketypes]
     status = "" if pkmn.status == "Normal" else pkmn.status
     status = f"Generation 1 {status}"
@@ -158,7 +158,7 @@ def pokemon_summary(pokemon_instance):
 # interaction Embeds
 ############################
 
-def inventory():
+def shop():
     desc = "More items coming soon!"
     em = discord.Embed(title="POKEBOT SHOP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")

@@ -8,13 +8,14 @@ import discobot_modules.egg as egg
 from discobot_modules.pretty_disco import pretty_listen
 import discobot_modules.text_coloring as tc
 
+import classes
 import embeds
 import users
 import db
 import encounters
+import economy
 
 
-import classes
 
 print("Modules Imported.")
 
@@ -80,7 +81,7 @@ async def on_message(message):
         
     if msgl.split()[0] == "!buy":
         if msgl.split()[1] in ["pokeball", "greatball", "ultraball"]:
-            await economy.buy(message.author.id, msgl.split()[1])
+            await economy.buy(message, msgl.split()[1])
             
     if msgl.split()[0] == "!pokedex":
         await message.reply(embed = embeds.pokedex(int(msgl.split()[1])))
