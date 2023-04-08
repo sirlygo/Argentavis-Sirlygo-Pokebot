@@ -17,17 +17,17 @@ This class handles the behavior of the wild encounter system.
 """
 
 
-async def roll_possible_encounter(message, probability):
+async def roll_possible_encounter(channel, probability):
     if random.random() <= probability:
-        await new_encounter(message)
+        await new_encounter(channel)
 
     
 
-async def new_encounter(message):
+async def new_encounter(channel):
     mon = classes.random_encounter()
     em = embeds.wild_encounter(mon)
     
-    encounter_message = await message.reply(embed = em)
+    encounter_message = await channel.send(embed = em)
     async def fight(args):
         reactor = args[1]
         if reactor.id not in USERS:

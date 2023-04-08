@@ -23,12 +23,12 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents = intents)
 
-home_channel = None
+home_channel = 1093393965539139644
 
 
 @client.event
 async def on_ready():
-    msg = "Pokebot active."
+    msg = "Mew pokebot active."
     print(msg)
     if home_channel:
         await client.get_channel(home_channel).send(msg)
@@ -99,12 +99,20 @@ async def on_message(message):
         if random.random() <= frequency:
             db.USERS[message.author.id]["bp"] += 1
     
-    await encounters.roll_possible_encounter(message, 0.01)
+    
+    if home_channel:
+        channel = client.get_channel(home_channel)
+        await encounters.roll_possible_encounter(channel, 0.01)
+
+    else:
+        await encounters.roll_possible_encounter(message.channel, 0.01)
     
     admin_uids = [145031705303056384, 291107598030340106]
     
     if message.author.id in admin_uids:
         print("__--~~ADMIN SPEAKING~~--__")
+        if msgl == "!admin help":
+            await message.reply(embed = embeds.help())
         if msgl.split()[0] == "!save":
             db.save_db()
             await message.channel.send("Saved database.")
