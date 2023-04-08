@@ -23,6 +23,7 @@ def help():
     em.add_field(name="!shop", value="Show the shop screen, so you can buy items.", inline=False)
     em.add_field(name="!pokedex", value="View the pokedex. Type !pokedex 151 to see a specific pokemon.")
     em.add_field(name="!summary", value="Take a look at your own pokemon. type a number to see a specific one of your mons.")
+    em.add_field(name="!dev", value="Check out the bot creator and read Mew's source code!")
     #em.add_field(name="!leaderboard", value="Display the leaderboard of today's top players.")
     return em
 
