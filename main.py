@@ -99,13 +99,13 @@ async def on_message(message):
         if random.random() <= frequency:
             db.USERS[message.author.id]["bp"] += 1
     
+    SPAWN_RATE = 0.02
     
     if home_channel:
         channel = client.get_channel(home_channel)
-        await encounters.roll_possible_encounter(channel, 0.01)
-
+        await encounters.roll_possible_encounter(channel, SPAWN_RATE)
     else:
-        await encounters.roll_possible_encounter(message.channel, 0.01)
+        await encounters.roll_possible_encounter(message.channel, SPAWN_RATE)
     
     admin_uids = [145031705303056384, 291107598030340106]
     
@@ -128,7 +128,7 @@ async def on_message(message):
             
             db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
         if msgl.split()[0] == "!spawn":
-            await encounters.roll_possible_encounter(message, 1)
+            await encounters.roll_possible_encounter(message.channel, 1)
         
         
     pretty_listen(message)
