@@ -64,6 +64,10 @@ async def on_message(message):
     if msgl.split()[0] == "!help":
         await message.reply(embed = embeds.help())
     
+    if msgl.split()[0] in ["!dev", "!github", "!source", "!comms", "!plug", "!shamelessplug", "!butte", "!gay"]:
+        await message.reply(embed = embeds.plug())
+    
+    
     #ping the bot
     if msgl.split()[0] == client.user.mention:
         await users.profile(message)
@@ -73,8 +77,6 @@ async def on_message(message):
 
     if msgl.split()[0] == "!egg":
         await egg.egg_timer(message)
-        
-    
     
     if msgl.split()[0] == "!shop":
         await economy.send_shop_screen(message)

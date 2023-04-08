@@ -36,6 +36,27 @@ def admin_help():
     em.add_field(name="!makpkmn", value="debug command to generate a pokemon with a certain dexno and nick.")
     #em.add_field(name="!pay", value="Give a user some gold. can be negative.")
     #em.add_field(name="!token", value="give a user one spoon token.")
+    return em
+    
+
+def plug():
+    title = "About the developer"
+    desc = "Hi! I'm the one who wrote this bot. I go by Argentavis or Rad_butte, but you can also just call me butte.(he/it/she)"
+    desc += "\n I've been writing discord bots since 2021, primarily for gaming, esports, LGBTQ, and streamer communities."
+    desc += "\n I primarily write discord bots in discord.py, but i also know Unity and Godot gamedev, and am also learning rust."
+    desc += "\n\n I'm an artist at heart: I see coding as a form of art: because any good artist is a problem-solver, \"How can i accomplish *this* as best as possible, or with as little as neccesary?\""
+    desc += "\n I also do 2d and 3d art, and am writing short science fiction."
+    desc += "\n Hit me up! Rad_Attraction_Towards_Pupper#6806"
+    
+    em = discord.Embed(title=title, description=desc, color=0xdd0c7f)
+    em.set_thumbnail(url="https://img.booru.org/vb//images/6/6163a7412542541f42c5d37823b8ae5815977715.png")
+    em.set_author(name="Argentavis/Rad_butte", url="https://buttegay.carrd.co/",icon_url="https://cdn.discordapp.com/attachments/1042247535911239702/1094139001344114688/dog_kek.png")
+    em.set_image(url="https://cdn.discordapp.com/attachments/1042247535911239702/1094142289900740679/orcinus.PNG")
+    
+    em.add_field(name="Want your own custom discord bot?", value="Order my gig on Fiverr!\nhttps://www.fiverr.com/share/ymERYA")
+    em.add_field(name="Interested in an art commission, 2d or 3d?", value="Hit me up and tell me more!")
+    em.add_field(name="Want to learn how to code?", value="I can teach you how to make your own bot!\nhttps://www.fiverr.com/share/Xj7bPP")
+    em.add_field(name="Check out Mew's source code!", value="https://github.com/Rad-Attraction/Argentavis-Sirlygo-Pokebot", inline=False)
     
     return em
 
