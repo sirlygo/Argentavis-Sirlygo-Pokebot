@@ -52,6 +52,7 @@ async def new_encounter(channel):
         catch = random.random() <= probability*ITEMS[ball]["catch_rate"]
         if catch:
             USERS[reactor.id]["pokemon"].append(mon.to_dict())
+            USERS.save_item(reactor.id)
             await encounter_message.channel.send(f"Congratulations, {reactor.mention}, you caught {mon.get_name()}!")
             return er(remove_dis_post=True, clear_reactions=True)
         else:

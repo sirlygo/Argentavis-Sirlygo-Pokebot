@@ -2,6 +2,7 @@ import discord
 from discobot_modules.graphics import moon_bar
 from db import USERS
 import classes
+from economy import user_item_count
 
 """
 This module defines all the embeds that the bot can display.
@@ -15,7 +16,7 @@ An embed is a panel with information arranged hierarchically.
 
 def help():
     desc = "To get started, ping the bot!"
-    em = discord.Embed(title="POKEBOT 0.1", description=desc, color=0xA0A1B0)
+    em = discord.Embed(title="Mew Pokébot 0.1.1", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
     em.add_field(name="Earn Battle Points", value="Chatting in the server can earn you BP!")
     em.add_field(name="Find Wild Pokemon", value="Occasionally, wild pokemon will spawn. Will you be the one to catch it?")
@@ -31,8 +32,8 @@ def admin_help():
     em.set_thumbnail(url="https://cdn.discordapp.com/attachments/402334732974686208/1079251418340409465/3t0f5yfuwaka1.jpg")
     em.add_field(name="!save", value="Save the database.")
     em.add_field(name="\"]\", \"die\", \"kill\"", value="Save and shutdown.")
-    #em.add_field(name="!save", value="Save the database.")
-    #em.add_field(name="!grant", value="Grant a user a specific character.")
+    em.add_field(name="!spawn", value="Forces a pokemon to spawn.")
+    em.add_field(name="!makpkmn", value="debug command to generate a pokemon with a certain dexno and nick.")
     #em.add_field(name="!pay", value="Give a user some gold. can be negative.")
     #em.add_field(name="!token", value="give a user one spoon token.")
     
@@ -75,7 +76,14 @@ def profile(user):
         if i > 5:
             break
     pkmn = pkmn if pkmn else "None."
-    em.add_field(name="Pokemon:", value=pkmn)
+    pkcount = len(USERS[user.id]["pokemon"])
+    
+    em.add_field(name=f"Caught Pokemon: {pkcount}", value="Items:", inline=False)
+    em.add_field(name="<:poke:1092956340349046844> Pokeball", value=str(user_item_count(user.id,"pokeball")))
+    em.add_field(name="<:great:1092956339166248961> Greatball", value=str(user_item_count(user.id,"greatball")))
+    em.add_field(name="<:ultra:1092956341670252624> Ultraball", value=str(user_item_count(user.id,"ultraball")))
+
+    em.add_field(name="Pokemon:", value=pkmn, inline=False)
     return em
 
 

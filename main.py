@@ -99,6 +99,7 @@ async def on_message(message):
         if random.random() <= frequency:
             db.USERS[message.author.id]["bp"] += 1
     
+    # Random Spawns
     SPAWN_RATE = 0.02
     
     if home_channel:
@@ -122,15 +123,20 @@ async def on_message(message):
             quit()
         if msgl.split()[0] == "!makpkmn":
             
-            spec = classes.Species.load_index(int(msgl.split()[2]))
+            spec = classes.Species.load_index(int(msgl.split()[1]))
             
-            newmon = classes.Individual(msgl.split()[1], spec)
+            newmon = classes.Individual(spec, nickname=msgl.split()[2])
             
             db.USERS[message.author.id]["pokemon"].append(newmon.to_dict())
         if msgl.split()[0] == "!spawn":
             await encounters.roll_possible_encounter(message.channel, 1)
-        
-        
+    
+    # memes
+    if msgl == "mew come here":
+        await message.channel.send("https://www.youtube.com/watch?v=krKfi0voUGA")
+    
+    
+    
     pretty_listen(message)
     await at.listen_timers(message)
 

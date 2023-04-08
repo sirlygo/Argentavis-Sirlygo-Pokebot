@@ -34,10 +34,10 @@ async def buy(message, item_key):
         
     
 
-def user_item_count(user, item_key):
-    if item_key not in user["items"]:
+def user_item_count(uid, item_key):
+    if item_key not in USERS[uid]["items"]:
         return 0
-    return user["items"][item_key]
+    return USERS[uid]["items"][item_key]
 
 def user_gain_item(uid, item_key, qty=1):
     """
