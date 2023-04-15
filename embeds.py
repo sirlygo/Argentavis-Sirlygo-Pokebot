@@ -192,9 +192,9 @@ def shop():
     desc = "More items coming soon!"
     em = discord.Embed(title="POKEBOT SHOP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
-    em.add_field(name="<:poke:1092956340349046844> Pokeball BP10", value="Normal catch rate.\n!buy pokeball")
-    em.add_field(name="<:great:1092956339166248961> Greatball BP20", value="1.5x catch rate.\n!buy greatball")
-    em.add_field(name="<:ultra:1092956341670252624> Ultraball BP30", value="2x catch rate.\n!buy ultraball")
+    em.add_field(name="<:poke:1092956340349046844> Pokeball BP5", value="Normal catch rate.\n!buy pokeball")
+    em.add_field(name="<:great:1092956339166248961> Greatball BP10", value="1.5x catch rate.\n!buy greatball")
+    em.add_field(name="<:ultra:1092956341670252624> Ultraball BP15", value="2x catch rate.\n!buy ultraball")
     return em
 
 
