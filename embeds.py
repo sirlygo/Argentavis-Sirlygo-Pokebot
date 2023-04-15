@@ -1,6 +1,7 @@
 import discord
 from discobot_modules.graphics import moon_bar
 from db import USERS
+from db import ITEMS
 import classes
 from economy import user_item_count
 
@@ -192,8 +193,11 @@ def shop():
     desc = "More items coming soon!"
     em = discord.Embed(title="POKEBOT SHOP", description=desc, color=0xA0A1B0)
     em.set_thumbnail(url="https://i.pinimg.com/originals/05/51/f5/0551f506725ac1deeaa85d46f8b9a5fd.jpg")
+    price = ITEMS["pokeball"]["price"]
     em.add_field(name="<:poke:1092956340349046844> Pokeball BP5", value="Normal catch rate.\n!buy pokeball")
+    price = ITEMS["greatball"]["price"]
     em.add_field(name="<:great:1092956339166248961> Greatball BP10", value="1.5x catch rate.\n!buy greatball")
+    price = ITEMS["ultraball"]["price"]
     em.add_field(name="<:ultra:1092956341670252624> Ultraball BP15", value="2x catch rate.\n!buy ultraball")
     return em
 
