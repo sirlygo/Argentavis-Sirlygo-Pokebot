@@ -31,8 +31,8 @@ async def buy(message, item_key):
     user["bp"] -=item["price"]
     USERS[uid] = user
     await message.reply(f"Here's your {item_name}! We hope to see you again!")
-        
-    
+
+
 
 def user_item_count(uid, item_key):
     if item_key not in USERS[uid]["items"]:
@@ -42,7 +42,7 @@ def user_item_count(uid, item_key):
 def user_gain_item(uid, item_key, qty=1):
     """
     Grant an item to a user and save to db.
-    
+
     Fail and print to the console if the user is invalid,
     or if negative items are passed.
     """
@@ -57,16 +57,16 @@ def user_gain_item(uid, item_key, qty=1):
         user["items"][item_key] = qty
     else:
         user["items"][item_key] += qty
-    
+
     USERS[uid] = user
 
 def user_spend_item(uid, item_key, qty=1):
     """
     Take an item from a user and save to db
-    
+
     Fail and print to the console if the user is invalid,
     or if negative items are passed.
-    
+
     Return a bool that represents if the user succsesfully spent or didnt have enought.
     """
     if uid not in USERS:
