@@ -21,12 +21,12 @@ async def roll_possible_encounter(channel, probability):
     if random.random() <= probability:
         await new_encounter(channel)
 
-    
+
 
 async def new_encounter(channel):
     mon = classes.random_encounter()
     em = embeds.wild_encounter(mon)
-    
+
     encounter_message = await channel.send(embed = em)
     async def fight(args):
         reactor = args[1]
@@ -36,13 +36,13 @@ async def new_encounter(channel):
         await encounter_message.channel.send(f"Battle system not yet implemented ¯\_(ツ)_/¯")
         return er(complete_action=False)
         #return er(remove_dis_post=True, clear_reactions=True)
-    
+
     async def catch(args, ball = "pokeball"):
         reactor = args[1]
         if reactor.id not in USERS:
             await encounter_message.channel.send(f"{reactor.mention}, you need to ping the bot to set up first!")
             return er(complete_action=False)
-        
+
         has_ball = economy.user_spend_item(reactor.id, ball)
         ballname = ITEMS[ball]["name"]
         if not has_ball:
@@ -58,13 +58,13 @@ async def new_encounter(channel):
         else:
             await encounter_message.channel.send(f"Oh! {reactor.mention}, the wild {mon.get_name()} broke out of the {ballname}!")
             return er(complete_action=False)
-    
+
     a_list = []
     ico = "⚔"
     name = "Fight"
     a = ea(ico, name, fight, pass_user=True)
     a_list.append(a)
-    
+
     ico = "<:poke:1092956340349046844>"
     name = "Pokeball"
     a = ea(ico, name, catch, pass_user=True)
@@ -77,5 +77,5 @@ async def new_encounter(channel):
     name = "Ultraball"
     a = ea(ico, name, lambda a: catch(a, "ultraball"), pass_user=True)
     a_list.append(a)
-    
+
     await action_button_list(encounter_message, a_list)

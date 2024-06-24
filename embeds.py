@@ -39,7 +39,7 @@ def admin_help():
     #em.add_field(name="!pay", value="Give a user some gold. can be negative.")
     #em.add_field(name="!token", value="give a user one spoon token.")
     return em
-    
+
 
 def plug():
     title = "About the developer"
@@ -49,17 +49,17 @@ def plug():
     desc += "\n\n I'm an artist at heart: I see coding as a form of art: because any good artist is a problem-solver, \"How can i accomplish *this* as best as possible, or with as little as neccesary?\""
     desc += "\n I also do 2d and 3d art, and am writing short science fiction."
     desc += "\n Hit me up! Rad_Attraction_Towards_Pupper#6806"
-    
+
     em = discord.Embed(title=title, description=desc, color=0xdd0c7f)
     em.set_thumbnail(url="https://img.booru.org/vb//images/6/6163a7412542541f42c5d37823b8ae5815977715.png")
     em.set_author(name="Argentavis/Rad_butte", url="https://buttegay.carrd.co/",icon_url="https://cdn.discordapp.com/attachments/1042247535911239702/1094139001344114688/dog_kek.png")
     em.set_image(url="https://cdn.discordapp.com/attachments/1042247535911239702/1094142289900740679/orcinus.PNG")
-    
+
     em.add_field(name="Want your own custom discord bot?", value="Order my gig on Fiverr!\nhttps://www.fiverr.com/share/ymERYA")
     em.add_field(name="Interested in an art commission, 2d or 3d?", value="Hit me up and tell me more!")
     em.add_field(name="Want to learn how to code?", value="I can teach you how to make your own bot!\nhttps://www.fiverr.com/share/Xj7bPP")
     em.add_field(name="Check out Mew's source code!", value="https://github.com/Rad-Attraction/Argentavis-Sirlygo-Pokebot", inline=False)
-    
+
     return em
 
 ############################
@@ -82,7 +82,7 @@ def user_winlossratio(user):
     return total / len(user["battles"])
 
 def profile(user):
-    
+
     udic = USERS[user.id]
     bp = udic["bp"]
     wins = user_wincount(udic)
@@ -100,7 +100,7 @@ def profile(user):
             break
     pkmn = pkmn if pkmn else "None."
     pkcount = len(USERS[user.id]["pokemon"])
-    
+
     em.add_field(name=f"Caught Pokemon: {pkcount}", value="Items:", inline=False)
     em.add_field(name="<:poke:1092956340349046844> Pokeball", value=str(user_item_count(user.id,"pokeball")))
     em.add_field(name="<:great:1092956339166248961> Greatball", value=str(user_item_count(user.id,"greatball")))
@@ -149,14 +149,14 @@ def stat_blocks(pokemon):
         #text += str(value)
         text += "\n"
     return text
-    
+
 
 def pokedex(pokemon_id):
     # bounds checks
     pokemon_id = pokemon_id % 890
     if pokemon_id < 1:
         pokemon_id = 890
-    
+
     pkmn = classes.Species.load_index(pokemon_id)
     title= f"{pkmn.name} #{pokemon_id}"
     poketypes = pkmn.get_elemental_typing()
@@ -169,7 +169,7 @@ def pokedex(pokemon_id):
     em.add_field(name="Abilities", value="\n".join(pkmn.get_abilities()))
     em.set_image(url=pkmn.naive_image())
     return em
-    
+
 def pokemon_summary(pokemon_instance):
     title = pokemon_instance.get_title()
     desc = f"Level {pokemon_instance.level}"
@@ -182,7 +182,7 @@ def pokemon_summary(pokemon_instance):
     em = discord.Embed(title=title, description=desc, color=0xE12005)
     em.set_image(url=pokemon_instance.species.naive_image())
     return em
-    
+
 
 
 ############################
@@ -216,7 +216,7 @@ def wild_encounter(pkmn):
     em = discord.Embed(title=title, description=desc, color=0xE12005)
     em.set_image(url=pkmn.species.naive_image())
     return em
-    
+
 def battle(battle):
     # Not yet implemented.
     ...
@@ -229,7 +229,7 @@ def battle(battle):
 def leaderboard(title, desc, sortingfunc, key, emoji, length=10, color=0x606170):
     # Sort leaderboard by specific topic
     sorted_udex = sorted(USERS.cache.items(), key=sortingfuc, reverse=True)
-    
+
     # Create embed
     em = discord.Embed(title=title, description=desc, color=color, url="")
 
@@ -255,7 +255,7 @@ def leaderboard_most_mons():
                     lambda x: len(x[1]["pokemon"]),
                     "<:poke:1092956340349046844>"
                     )
-                    
+
 def leaderboard_wins():
     return leaderboard(
                     "BIGGEST FIGHTERS", 

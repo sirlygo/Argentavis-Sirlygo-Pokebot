@@ -20,15 +20,15 @@ def new_user(user):
     # might help with if i ever must change the user struct?
     u = {}
     u["uid"] = user.id
-    
+
     u["bp"] = 0
-    
+
     u["items"] = {"pokeball": 5}
-    
+
     u["pokemon"] = []
-    
-    
+
+
     u["battles"] = []
-    
+
     USERS[user.id] = u
     

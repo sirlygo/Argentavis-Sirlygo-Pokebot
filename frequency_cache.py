@@ -7,7 +7,7 @@ class Frequency_Cache:
     Represents a caching system to retrieve json files from a directory.
     It stores a certain number of objects before evicting the least
     frequently accessed item from the cache.
-    
+
     Can specify a unique path and max size.
     Can specify static or non-static.
     non-static caches will save their data 
@@ -20,7 +20,7 @@ class Frequency_Cache:
         self.cache = OrderedDict()         # Ordered dictionary to store cache items
         self.access_count = {}             # Dictionary to store access counts for each item
         self.decay_factor = decay_factor   # Factor to decay access counts
-    
+
     def __contains__(self, key):
         if key in self.cache:
             # Happy Path, it's easily true
@@ -28,9 +28,9 @@ class Frequency_Cache:
         else:
             path = f"{self.path_prefix}{key}.json"
             return os.path.isfile(path)
-    
 
-    
+
+
     def __getitem__(self, key):
         if key in self.cache:
             # Happy Path, move this item to the end so it's sorted by recency
@@ -42,15 +42,15 @@ class Frequency_Cache:
                 data = json.load(f)
             # Call __setitem__ to add new value and decache old ones
             self[key] = data
-            
+
         # Both Paths converge here.
         # Decay all access counts and increment this one.
         for k in self.access_count.keys():
             self.access_count[k] *= self.decay_factor
         self.access_count[key] += 1
-        
+
         return self.cache[key]
-    
+
     def __setitem__(self, key, newvalue):
         # Add the item and initialize the access count to 0. 
         # If it is being accessed by __getitem__, increment later.
