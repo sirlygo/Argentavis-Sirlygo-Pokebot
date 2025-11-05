@@ -8,9 +8,11 @@ from discobot_modules.emoji_actions import ea_response as er
 from db import USERS
 from db import ITEMS
 
+import battle
 import classes
 import embeds
 import economy
+import users
 
 """
 This class handles the behavior of the wild encounter system.
@@ -33,16 +35,34 @@ async def new_encounter(channel):
         if reactor.id not in USERS:
             await encounter_message.channel.send(f"{reactor.mention}, you need to ping the bot to set up first!")
             return er(complete_action=False)
-        await encounter_message.channel.send(f"Battle system not yet implemented ¯\_(ツ)_/¯")
-        return er(complete_action=False)
-        #return er(remove_dis_post=True, clear_reactions=True)
+
+        users.ensure_user_record(reactor.id)
+        users.update_display_name(reactor)
+        party_members = users.get_party_members(reactor.id)
+        if not party_members:
+            await encounter_message.channel.send(
+                f"{reactor.mention}, set up a party first with `!party add <number>`!"
+            )
+            return er(complete_action=False)
+
+        await battle.start_wild_battle(
+            encounter_message.channel,
+            reactor.id,
+            getattr(reactor, "display_name", reactor.name),
+            party_members,
+            mon,
+        )
+        await encounter_message.delete()
+        return er(remove_dis_post=True, clear_reactions=True)
     
     async def catch(args, ball = "pokeball"):
         reactor = args[1]
         if reactor.id not in USERS:
             await encounter_message.channel.send(f"{reactor.mention}, you need to ping the bot to set up first!")
             return er(complete_action=False)
-        
+
+        users.ensure_user_record(reactor.id)
+        users.update_display_name(reactor)
         has_ball = economy.user_spend_item(reactor.id, ball)
         ballname = ITEMS[ball]["name"]
         if not has_ball:
@@ -51,8 +71,7 @@ async def new_encounter(channel):
         probability = float(mon.species.catch_rate) / 255.0
         catch = random.random() <= probability*ITEMS[ball]["catch_rate"]
         if catch:
-            USERS[reactor.id]["pokemon"].append(mon.to_dict())
-            USERS.save_item(reactor.id)
+            users.catch_pokemon(reactor.id, mon)
             await encounter_message.channel.send(f"Congratulations, {reactor.mention}, you caught {mon.get_name()}!")
             return er(remove_dis_post=True, clear_reactions=True)
         else:

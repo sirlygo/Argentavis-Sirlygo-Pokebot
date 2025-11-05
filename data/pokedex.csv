@@ -1,0 +1,37 @@
+index,pokedex_number,name,form,variant,generation,status,pokedex_species,classification,type_1,type_2,height_m,weight_kg,gender_ratio,ability_1,ability_2,ability_hidden,egg_cycles,hp,attack,defense,sp_attack,sp_defense,speed,catch_rate,base_friendship,base_experience,growth_rate
+1,1,Bulbasaur,,,1,Normal,Seed Pokémon,,grass,poison,0.7,6.9,,Overgrow,,Chlorophyll,,45,49,49,65,65,45,45,70,64,medium-slow
+2,2,Ivysaur,,,1,Normal,Seed Pokémon,,grass,poison,1.0,13.0,,Overgrow,,Chlorophyll,,60,62,63,80,80,60,45,70,142,medium-slow
+3,3,Venusaur,,,1,Normal,Seed Pokémon,,grass,poison,2.0,100.0,,Overgrow,,Chlorophyll,,80,82,83,100,100,80,45,70,236,medium-slow
+4,4,Charmander,,,1,Normal,Lizard Pokémon,,fire,,0.6,8.5,,Blaze,,Solar Power,,39,52,43,60,50,65,45,70,62,medium-slow
+5,5,Charmeleon,,,1,Normal,Flame Pokémon,,fire,,1.1,19.0,,Blaze,,Solar Power,,58,64,58,80,65,80,45,70,142,medium-slow
+6,6,Charizard,,,1,Normal,Flame Pokémon,,fire,flying,1.7,90.5,,Blaze,,Solar Power,,78,84,78,109,85,100,45,70,240,medium-slow
+7,7,Squirtle,,,1,Normal,Tiny Turtle Pokémon,,water,,0.5,9.0,,Torrent,,Rain Dish,,44,48,65,50,64,43,45,70,63,medium-slow
+8,8,Wartortle,,,1,Normal,Turtle Pokémon,,water,,1.0,22.5,,Torrent,,Rain Dish,,59,63,80,65,80,58,45,70,142,medium-slow
+9,9,Blastoise,,,1,Normal,Shellfish Pokémon,,water,,1.6,85.5,,Torrent,,Rain Dish,,79,83,100,85,105,78,45,70,239,medium-slow
+10,10,Caterpie,,,1,Normal,Worm Pokémon,,bug,,0.3,2.9,,Shield Dust,,Run Away,,45,30,35,20,20,45,255,70,39,medium-slow
+11,11,Metapod,,,1,Normal,Cocoon Pokémon,,bug,,0.7,9.9,,Shed Skin,,Shed Skin,,50,20,55,25,25,30,120,70,72,medium-slow
+12,12,Butterfree,,,1,Normal,Butterfly Pokémon,,bug,flying,1.1,32.0,,Compound Eyes,,Tinted Lens,,60,45,50,90,80,70,45,70,178,medium-slow
+13,13,Weedle,,,1,Normal,Hairy Bug Pokémon,,bug,poison,0.3,3.2,,Shield Dust,,Run Away,,40,35,30,20,20,50,255,70,39,medium-slow
+14,14,Kakuna,,,1,Normal,Cocoon Pokémon,,bug,poison,0.6,10.0,,Shed Skin,,Shed Skin,,45,25,50,25,25,35,120,70,72,medium-slow
+15,15,Beedrill,,,1,Normal,Poison Bee Pokémon,,bug,poison,1.0,29.5,,Swarm,,Sniper,,65,90,40,45,80,75,45,70,178,medium-slow
+16,16,Pidgey,,,1,Normal,Tiny Bird Pokémon,,normal,flying,0.3,1.8,,Keen Eye,Tangled Feet,Big Pecks,,40,45,40,35,35,56,255,70,50,medium-slow
+17,17,Pidgeotto,,,1,Normal,Bird Pokémon,,normal,flying,1.1,30.0,,Keen Eye,Tangled Feet,Big Pecks,,63,60,55,50,50,71,120,70,122,medium-slow
+18,18,Pidgeot,,,1,Normal,Bird Pokémon,,normal,flying,1.5,39.5,,Keen Eye,Tangled Feet,Big Pecks,,83,80,75,70,70,101,45,70,216,medium-slow
+19,19,Rattata,,,1,Normal,Mouse Pokémon,,normal,,0.3,3.5,,Run Away,Guts,Hustle,,30,56,35,25,35,72,255,70,51,medium-slow
+20,20,Raticate,,,1,Normal,Mouse Pokémon,,normal,,0.7,18.5,,Run Away,Guts,Hustle,,55,81,60,50,70,97,127,70,145,medium-slow
+21,25,Pikachu,,,1,Normal,Mouse Pokémon,,electric,,0.4,6.0,,Static,,Lightning Rod,,35,55,40,50,50,90,190,70,112,medium-fast
+22,26,Raichu,,,1,Normal,Mouse Pokémon,,electric,,0.8,30.0,,Static,,Lightning Rod,,60,90,55,90,80,110,75,70,218,medium-fast
+23,35,Clefairy,,,1,Normal,Fairy Pokémon,,fairy,,0.6,7.5,,Cute Charm,Magic Guard,Friend Guard,,70,45,48,60,65,35,150,70,113,fast
+24,36,Clefable,,,1,Normal,Fairy Pokémon,,fairy,,1.3,40.0,,Cute Charm,Magic Guard,Unaware,,95,70,73,95,90,60,25,70,242,fast
+25,39,Jigglypuff,,,1,Normal,Balloon Pokémon,,normal,fairy,0.5,5.5,,Cute Charm,Competitive,Friend Guard,,115,45,20,45,25,20,170,70,95,fast
+26,40,Wigglytuff,,,1,Normal,Balloon Pokémon,,normal,fairy,1.0,12.0,,Cute Charm,Competitive,Frisk,,140,70,45,85,50,45,50,70,218,fast
+27,52,Meowth,,,1,Normal,Scratch Cat Pokémon,,normal,,0.4,4.2,,Pickup,Technician,Unnerve,,40,45,35,40,40,90,255,70,58,medium-fast
+28,53,Persian,,,1,Normal,Classy Cat Pokémon,,normal,,1.0,32.0,,Limber,Technician,Unnerve,,65,70,60,65,65,115,90,70,154,medium-fast
+29,58,Growlithe,,,1,Normal,Puppy Pokémon,,fire,,0.7,19.0,,Intimidate,Flash Fire,Justified,,55,70,45,70,50,60,190,70,70,slow
+30,59,Arcanine,,,1,Normal,Legendary Pokémon,,fire,,1.9,155.0,,Intimidate,Flash Fire,Justified,,90,110,80,100,80,95,75,70,194,slow
+31,63,Abra,,,1,Normal,Psi Pokémon,,psychic,,0.9,19.5,,Synchronize,Inner Focus,Magic Guard,,25,20,15,105,55,90,200,70,62,medium-slow
+32,64,Kadabra,,,1,Normal,Psi Pokémon,,psychic,,1.3,56.5,,Synchronize,Inner Focus,Magic Guard,,40,35,30,120,70,105,100,70,140,medium-slow
+33,65,Alakazam,,,1,Normal,Psi Pokémon,,psychic,,1.5,48.0,,Synchronize,Inner Focus,Magic Guard,,55,50,45,135,95,120,50,70,225,medium-slow
+34,66,Machop,,,1,Normal,Superpower Pokémon,,fighting,,0.8,19.5,,Guts,No Guard,Steadfast,,70,80,50,35,35,35,180,70,61,medium-slow
+35,67,Machoke,,,1,Normal,Superpower Pokémon,,fighting,,1.5,70.5,,Guts,No Guard,Steadfast,,80,100,70,50,60,45,90,70,142,medium-slow
+36,68,Machamp,,,1,Normal,Superpower Pokémon,,fighting,,1.6,130.0,,Guts,No Guard,Steadfast,,90,130,80,65,85,55,45,70,227,medium-slow

@@ -1,0 +1,6 @@
+{
+  "name": "Poké Ball",
+  "price": 10,
+  "catch_rate": 1.0,
+  "description": "A device for catching wild Pokémon. It has a low success rate."
+}
