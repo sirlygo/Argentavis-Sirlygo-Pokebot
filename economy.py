@@ -28,8 +28,10 @@ async def buy(message, item_key):
         return
     # Perform Transaction
     user_gain_item(uid, item_key)
-    user["bp"] -=item["price"]
+    user = USERS[uid]
+    user["bp"] -= item["price"]
     USERS[uid] = user
+    USERS.save_item(uid)
     await message.reply(f"Here's your {item_name}! We hope to see you again!")
         
     
@@ -57,8 +59,9 @@ def user_gain_item(uid, item_key, qty=1):
         user["items"][item_key] = qty
     else:
         user["items"][item_key] += qty
-    
+
     USERS[uid] = user
+    USERS.save_item(uid)
 
 def user_spend_item(uid, item_key, qty=1):
     """
@@ -71,7 +74,7 @@ def user_spend_item(uid, item_key, qty=1):
     """
     if uid not in USERS:
         print(f"{tc.R}Cannot grant item {tc.W}\"{item_key}\"{tc.R} to user because there is no user with this uid:\n{tc.B}{uid}{tc.W}")
-        return
+        return False
     if qty < 0:
         print(f"{tc.O}Warning: tried to give {qty} {tc.W}\"{item_key}\"{tc.O} to user {tc.B}{uid}{tc.O}\nQuantity converted to positive.{tc.W}")
         qty = -qty
@@ -82,4 +85,5 @@ def user_spend_item(uid, item_key, qty=1):
         return False
     user["items"][item_key] -= qty
     USERS[uid] = user
+    USERS.save_item(uid)
     return True
