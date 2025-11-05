@@ -1,7 +1,15 @@
+from __future__ import annotations
+
 from enum import Enum
-from typing import Optional
+from functools import lru_cache
+from typing import Dict, Iterable, List, Optional, Sequence
 from dataclasses import dataclass, field
 import random
+import uuid
+import math
+
+import moves
+import evolutions
 
 
 
@@ -172,7 +180,7 @@ class Species():
         
         This is done by simply looping through the list until we find the right natdexno.
         """
-        with open(file_path, "r+", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             
             for dexentry in f.read().splitlines():
                 d = dexentry.split(",")
@@ -187,18 +195,131 @@ class Held_item():
     name : str
 
 
+STAT_KEYS = ("hp", "attack", "defense", "sp_attack", "sp_defense", "speed")
+
+
+def _growth_experience(level: int, rate: str) -> int:
+    level = max(1, int(level))
+    rate = (rate or "medium-slow").lower()
+    if rate == "fast":
+        return int(4 * (level ** 3) / 5)
+    if rate == "medium-fast":
+        return level ** 3
+    if rate == "slow":
+        return int(5 * (level ** 3) / 4)
+    # medium-slow fallback
+    return int((6/5) * (level ** 3) - 15 * (level ** 2) + 100 * level - 140)
+
+
+def _experience_to_level(exp: int, rate: str) -> int:
+    level = 1
+    while _growth_experience(level + 1, rate) <= exp:
+        level += 1
+        if level >= 100:
+            return 100
+    return level
+
+
 class Individual():
     """
     This represents an individual in your collection.
     """
-    def __init__(self, species, nickname = None, level= 1, shiny=None):
+
+    def __init__(
+        self,
+        species,
+        nickname=None,
+        level=1,
+        shiny=None,
+        instance_id=None,
+        ivs: Optional[Dict[str, int]] = None,
+        evs: Optional[Dict[str, int]] = None,
+        experience: Optional[int] = None,
+        moveset: Optional[Sequence[str]] = None,
+    ):
         self.species = species
         self.nickname = nickname
-        self.level = level
-        self.shiny = shiny if shiny is not None else random.randint(1,8192) == 8192
-        #self.evs : Evs
-        #self.ivs : Ivs
+        self.level = max(1, int(level))
+        self.shiny = bool(shiny) if shiny is not None else random.randint(1, 8192) == 8192
+        self.instance_id = instance_id or uuid.uuid4().hex
+        self.ivs = self._normalise_ivs(ivs)
+        self.evs = self._normalise_evs(evs)
+        self.experience = self._normalise_experience(experience)
+        self.moves = self._normalise_moves(moveset)
         #self.held_item : Optional[Held_Item] = None
+
+    @staticmethod
+    def _normalise_ivs(raw: Optional[Dict[str, int]]) -> Dict[str, int]:
+        ivs: Dict[str, int] = {}
+        if isinstance(raw, dict):
+            for key in STAT_KEYS:
+                value = raw.get(key)
+                if value is None:
+                    value = random.randint(0, 31)
+                ivs[key] = int(max(0, min(31, int(value))))
+        else:
+            for key in STAT_KEYS:
+                ivs[key] = random.randint(0, 31)
+        return ivs
+
+    @staticmethod
+    def _normalise_evs(raw: Optional[Dict[str, int]]) -> Dict[str, int]:
+        evs: Dict[str, int] = {}
+        if isinstance(raw, dict):
+            for key in STAT_KEYS:
+                value = raw.get(key, 0)
+                evs[key] = int(max(0, min(252, int(value))))
+        else:
+            for key in STAT_KEYS:
+                evs[key] = 0
+        total = sum(evs.values())
+        if total > 510:
+            # Scale down proportionally to respect the overall cap.
+            factor = 510 / total if total else 0
+            for key in STAT_KEYS:
+                evs[key] = int(math.floor(evs[key] * factor))
+        return evs
+
+    def _normalise_experience(self, exp: Optional[int]) -> int:
+        if isinstance(exp, int) and exp >= 0:
+            target_level = _experience_to_level(exp, self.species.growth_rate)
+            if target_level != self.level:
+                self.level = target_level
+            return exp
+        return _growth_experience(self.level, self.species.growth_rate)
+
+    def _default_move_candidates(self) -> List[str]:
+        type_names: List[str] = []
+        type_names.append(self.species.type_1.name)
+        if self.species.type_2:
+            type_names.append(self.species.type_2.name)
+        candidates: List[str] = []
+        for typename in type_names:
+            candidates.extend(moves.TYPE_SIGNATURE_MOVES.get(typename, []))
+        if not candidates:
+            candidates.append("tackle")
+        # guarantee at least two attacks
+        if "quick_attack" not in candidates:
+            candidates.append("quick_attack")
+        return candidates
+
+    def _normalise_moves(self, moveset: Optional[Sequence[str]]) -> List[str]:
+        available = []
+        if moveset:
+            for name in moveset:
+                if moves.get(name):
+                    available.append(name)
+        if not available:
+            default = self._default_move_candidates()
+            stage = min(len(default), max(1, (self.level + 9) // 10))
+            available = default[: max(2, min(4, stage + 1))]
+        return list(dict.fromkeys(available))[:4]
+
+    def total_evs(self) -> int:
+        return sum(self.evs.values())
+
+    def remaining_ev_capacity(self) -> int:
+        return max(0, 510 - self.total_evs())
     
     def get_name(self):
         """
@@ -218,18 +339,32 @@ class Individual():
             return self.species.name
         return f"{self.nickname} ({self.species.name})"
     
+    def _stat_value(self, base: int, iv: int, ev: int, is_hp: bool) -> int:
+        level = self.level
+        ev_term = ev // 4
+        if is_hp:
+            return int(math.floor(((2 * base + iv + ev_term) * level) / 100) + level + 10)
+        return int(math.floor(((2 * base + iv + ev_term) * level) / 100) + 5)
+
     def get_stats(self):
-        """
-        WIP calculation of an individuals's stats as it levels up.
-        """
+        """Calculate the battle stats for this individual."""
         return {
-        "hp" : self.species.hp * self.level / 100,
-        "attack" : self.species.attack * self.level / 100,
-        "defense" : self.species.defense * self.level / 100,
-        "sp_attack" : self.species.sp_attack * self.level / 100,
-        "sp_defense" : self.species.sp_defense * self.level / 100,
-        "speed" : self.species.speed * self.level / 100
+            "hp": self._stat_value(self.species.hp, self.ivs["hp"], self.evs["hp"], True),
+            "attack": self._stat_value(self.species.attack, self.ivs["attack"], self.evs["attack"], False),
+            "defense": self._stat_value(self.species.defense, self.ivs["defense"], self.evs["defense"], False),
+            "sp_attack": self._stat_value(self.species.sp_attack, self.ivs["sp_attack"], self.evs["sp_attack"], False),
+            "sp_defense": self._stat_value(self.species.sp_defense, self.ivs["sp_defense"], self.evs["sp_defense"], False),
+            "speed": self._stat_value(self.species.speed, self.ivs["speed"], self.evs["speed"], False),
         }
+
+    def max_hp(self) -> int:
+        return self.get_stats()["hp"]
+
+    def get_move_names(self) -> List[str]:
+        return list(self.moves)
+
+    def get_move_objects(self) -> List[moves.Move]:
+        return [moves.get(name) for name in self.moves if moves.get(name)]
     
     def get_stats_list(self):
         """Format stats as a list with six elements instead of a dict."""
@@ -247,59 +382,93 @@ class Individual():
     def from_dict(cls, data):
         """Load an individual from a dict, like how it might be stored in file."""
         req_keys = [
-        "nickname",
         "species",
-        "level",
-        "shiny",
-        "item",
-        "ivs",
-        "evs"
         ]
-        if not all(key in data for key in req_keys):
-            # If something is missing, we can't make a pokemon.
+        if not data or not all(key in data for key in req_keys):
+            # If something critical is missing, we can't make a pokemon.
             return None
-        
-        nickname = data["nickname"]
+
+        nickname = data.get("nickname")
         species = Species.load_index(data["species"])
-        level = data["level"]
-        shiny = data["shiny"]
-        #self.item = Item(data["item"]) if data["item"] else None
-        #self.ivs = data["ivs"]
-        #self.evs = data["evs"]
-        return cls(species, nickname, level, shiny)
-    
+        level = data.get("level", 1)
+        shiny = data.get("shiny", False)
+        instance_id = data.get("uid")
+        raw_ivs = data.get("ivs")
+        if isinstance(raw_ivs, list):
+            raw_ivs = {key: raw_ivs[idx] for idx, key in enumerate(STAT_KEYS) if idx < len(raw_ivs)}
+        raw_evs = data.get("evs")
+        if isinstance(raw_evs, list):
+            raw_evs = {key: raw_evs[idx] for idx, key in enumerate(STAT_KEYS) if idx < len(raw_evs)}
+        experience = data.get("experience")
+        moveset = data.get("moves")
+        return cls(species, nickname, level, shiny, instance_id, raw_ivs, raw_evs, experience, moveset)
+
     def to_dict(self):
         data = dict()
         data["nickname"] = self.nickname
         data["species"] = self.species.pokedex_number
         data["level"] = self.level
         data["shiny"] = self.shiny
+        data["uid"] = self.instance_id
         data["item"] = ""#self.item.name if self.item else ""
-        data["ivs"] = ""# self.ivs
-        data["evs"] = ""# self.evs
+        data["ivs"] = {key: int(self.ivs[key]) for key in STAT_KEYS}
+        data["evs"] = {key: int(self.evs[key]) for key in STAT_KEYS}
+        data["experience"] = int(self.experience)
+        data["moves"] = list(self.moves)
         return data
 
-# Precalculated value, sum of all catch weights of all pokemon.
-TOTAL_CATCH_RATE = 79195
+    def gain_experience(self, amount: int) -> Dict[str, List[str]]:
+        amount = max(0, int(amount))
+        events: Dict[str, List[str]] = {"level": [], "evolution": []}
+        if amount <= 0:
+            return events
+        target = min(100, self.level)
+        self.experience += amount
+        new_level = _experience_to_level(self.experience, self.species.growth_rate)
+        if new_level > self.level:
+            for lvl in range(self.level + 1, new_level + 1):
+                events["level"].append(f"Reached level {lvl}!")
+            self.level = new_level
+            # Refresh moves at certain milestones
+            if len(self.moves) < 4:
+                self.moves = self._normalise_moves(self.moves)
+        evo = evolutions.next_evolution(self.species.pokedex_number, self.level)
+        if evo:
+            new_species = Species.load_index(evo)
+            if new_species:
+                self.species = new_species
+                self.moves = self._normalise_moves(self.moves)
+                events["evolution"].append(f"Evolved into {self.species.name}!")
+        return events
 
-def random_encounter():
-    """"
-    Select a random pokemon. 
-    Pokemon with an easier catch rate are more common.
-    """
-    progress = random.randint(0,TOTAL_CATCH_RATE)
-    with open("data/pokedex.csv", "r+", encoding="utf-8") as f:
+@lru_cache(maxsize=1)
+def _encounter_table(file_path="data/pokedex.csv"):
+    """Load every catchable species once and cache the cumulative rates."""
+    table = []
+    running_total = 0
+    with open(file_path, "r", encoding="utf-8") as f:
         for dexentry in f.read().splitlines():
             d = dexentry.split(",")
-            #skip the first csv
-            if d[1] == "pokedex_number":
+            if len(d) < 25 or d[1] == "pokedex_number":
                 continue
-            cr = int(float(d[24])) if d[24] else 1
-            progress -= cr
-            if progress <= 0:
-                spec = Species.from_data(d)
-                return Individual(spec)
-            
+            spec = Species.from_data(d)
+            cr = spec.catch_rate if spec.catch_rate else 1
+            running_total += cr
+            table.append((running_total, spec))
+    return table, running_total
+
+
+def random_encounter():
+    """Select a random pokemon. Easier catches appear more frequently."""
+    table, total = _encounter_table()
+    if not table or total <= 0:
+        raise RuntimeError("Encounter table is empty; ensure pokedex data is available.")
+    progress = random.randint(1, total)
+    for threshold, spec in table:
+        if progress <= threshold:
+            return Individual(spec, level=random.randint(3, 40))
+    # Fallback if rounding pushes us out of bounds.
+    return Individual(table[-1][1], level=random.randint(3, 40))
 
 if __name__ == "__main__":
     print(Species.load_index(25)  )
